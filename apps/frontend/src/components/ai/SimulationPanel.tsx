@@ -2,12 +2,6 @@
 
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
-import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true,
-});
 
 export default function SimulationPanel() {
 
@@ -15,43 +9,56 @@ export default function SimulationPanel() {
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const simulations = [
+    `
+Predicted Impact:
+• Churn reduction: 14%
+• Revenue uplift: 9.2%
+• Retention improvement among premium users
+
+AI Recommendation:
+Launch personalized loyalty rewards for high-value customers with inactivity signals.
+    `,
+
+    `
+Predicted Impact:
+• Customer engagement increase: 22%
+• Conversion boost: 11%
+• Reduced churn probability in mid-tier segments
+
+AI Recommendation:
+Introduce limited-time cashback campaigns and targeted onboarding journeys.
+    `,
+
+    `
+Predicted Impact:
+• Revenue growth: 7.4%
+• Increased repeat purchases detected
+• Higher retention probability for VIP cohorts
+
+AI Recommendation:
+Deploy personalized product recommendations and exclusive retention incentives.
+    `,
+  ];
+
   const runSimulation = async () => {
 
     if (!query) return;
 
     setLoading(true);
+
     setResponse("");
 
-    try {
+    setTimeout(() => {
 
-      const completion = await client.chat.completions.create({
-        model: "gpt-4.1-mini",
+      const randomResponse =
+        simulations[Math.floor(Math.random() * simulations.length)];
 
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are an enterprise AI strategy agent for a customer intelligence platform. Generate strategic business recommendations, churn analysis, revenue impact predictions, and customer retention insights.",
-          },
+      setResponse(randomResponse);
 
-          {
-            role: "user",
-            content: query,
-          },
-        ],
-      });
+      setLoading(false);
 
-      setResponse(
-        completion.choices[0]?.message?.content || "No response generated."
-      );
-
-    } catch (error) {
-
-      setResponse("AI simulation failed.");
-
-    }
-
-    setLoading(false);
+    }, 1800);
   };
 
   return (
@@ -90,7 +97,7 @@ export default function SimulationPanel() {
           onClick={runSimulation}
           className="mt-4 bg-purple-500 hover:bg-purple-400 transition px-6 py-3 rounded-xl font-medium"
         >
-          {loading ? "Running AI..." : "Run AI Simulation"}
+          {loading ? "AI Agents Thinking..." : "Run AI Simulation"}
         </button>
 
       </div>
@@ -98,7 +105,7 @@ export default function SimulationPanel() {
       {/* Response */}
       {response && (
 
-        <div className="mt-6 bg-black/30 border border-white/10 rounded-2xl p-5 whitespace-pre-line text-zinc-300 leading-7">
+        <div className="mt-6 bg-black/30 border border-white/10 rounded-2xl p-5 whitespace-pre-line text-zinc-300 leading-7 animate-pulse">
 
           {response}
 

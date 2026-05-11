@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import RevenueChart from "@/components/charts/RevenueChart";
 import SimulationPanel from "@/components/ai/SimulationPanel";
+import SegmentChart from "@/components/charts/SegmentChart";
 
 import {
   LayoutDashboard,
@@ -261,6 +262,9 @@ export default function Home() {
 
           <div className="mt-10">
   <RevenueChart />
+  <div className="mt-10">
+  <SegmentChart />
+</div>
   <SimulationPanel />
 </div>
 
