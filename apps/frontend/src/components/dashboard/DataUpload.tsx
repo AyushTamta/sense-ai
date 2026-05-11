@@ -30,6 +30,12 @@ export default function DataUpload() {
         state.setExecutiveInsights
     );
 
+  const setAgentStatuses =
+    useCustomerStore(
+      (state) =>
+        state.setAgentStatuses
+    );
+
   const handleUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -42,7 +48,76 @@ export default function DataUpload() {
 
     setLoading(true);
 
-    // START LIVE AGENT FLOW
+    // ACTIVATE AI AGENTS
+    setAgentStatuses([
+
+      {
+        id: 1,
+
+        name: "Segment Agent",
+
+        status: "Running",
+
+        task:
+          "Analyzing customer cohorts",
+
+        confidence: 91,
+
+        update:
+          "Detected VIP and At-Risk customer segments.",
+      },
+
+      {
+        id: 2,
+
+        name: "Forecast Agent",
+
+        status: "Running",
+
+        task:
+          "Predicting churn probability",
+
+        confidence: 94,
+
+        update:
+          "ML engine identified elevated churn risk patterns.",
+      },
+
+      {
+        id: 3,
+
+        name: "Executive Agent",
+
+        status: "Running",
+
+        task:
+          "Generating executive intelligence",
+
+        confidence: 96,
+
+        update:
+          "Revenue concentration detected among premium customers.",
+      },
+
+      {
+        id: 4,
+
+        name: "Simulation Agent",
+
+        status: "Running",
+
+        task:
+          "Preparing retention simulations",
+
+        confidence: 89,
+
+        update:
+          "AI strategy workflows initialized successfully.",
+      },
+
+    ]);
+
+    // LIVE AGENT FLOW
     setAgentSteps([
 
       {
@@ -206,7 +281,7 @@ export default function DataUpload() {
 
       ]);
 
-      // COMPLETE AI FLOW
+      // COMPLETE AGENT FLOW
       setTimeout(() => {
 
         setAgentSteps([
@@ -250,6 +325,75 @@ export default function DataUpload() {
             label:
               "Intelligence pipeline complete",
             completed: true,
+          },
+
+        ]);
+
+        // UPDATE AGENT STATUS
+        setAgentStatuses([
+
+          {
+            id: 1,
+
+            name: "Segment Agent",
+
+            status: "Completed",
+
+            task:
+              "Customer segmentation complete",
+
+            confidence: 97,
+
+            update:
+              "VIP and At-Risk cohorts successfully analyzed.",
+          },
+
+          {
+            id: 2,
+
+            name: "Forecast Agent",
+
+            status: "Completed",
+
+            task:
+              "Churn prediction complete",
+
+            confidence: 98,
+
+            update:
+              `${data.predicted_churn_customers} high-risk customers identified.`,
+          },
+
+          {
+            id: 3,
+
+            name: "Executive Agent",
+
+            status: "Completed",
+
+            task:
+              "Executive summary generated",
+
+            confidence: 99,
+
+            update:
+              "Business intelligence summary delivered successfully.",
+          },
+
+          {
+            id: 4,
+
+            name: "Simulation Agent",
+
+            status: "Completed",
+
+            task:
+              "Retention simulations prepared",
+
+            confidence: 95,
+
+            update:
+              "AI retention strategies generated successfully.",
           },
 
         ]);
@@ -311,7 +455,7 @@ Average Churn Probability: ${data.average_churn_probability}%
 
       </div>
 
-      {/* UPLOAD BOX */}
+      {/* UPLOAD AREA */}
       <label
         className="mt-8 border-2 border-dashed border-white/10 rounded-3xl h-72 flex flex-col items-center justify-center cursor-pointer hover:border-purple-500/40 transition bg-black/20"
       >
@@ -341,7 +485,7 @@ Average Churn Probability: ${data.average_churn_probability}%
 
       </label>
 
-      {/* SUCCESS STATE */}
+      {/* SUCCESS */}
       {fileName && (
 
         <div className="mt-6 bg-green-500/10 border border-green-500/20 rounded-2xl p-5">

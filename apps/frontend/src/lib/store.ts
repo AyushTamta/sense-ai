@@ -42,6 +42,21 @@ interface ExecutiveInsight {
   description: string;
 }
 
+interface AgentStatus {
+
+  id: number;
+
+  name: string;
+
+  status: string;
+
+  task: string;
+
+  confidence: number;
+
+  update: string;
+}
+
 interface StoreState {
 
   customers: CustomerData[];
@@ -51,6 +66,8 @@ interface StoreState {
   agentSteps: AgentStep[];
 
   executiveInsights: ExecutiveInsight[];
+
+  agentStatuses: AgentStatus[];
 
   setCustomers: (
     data: CustomerData[]
@@ -67,6 +84,10 @@ interface StoreState {
   setExecutiveInsights: (
     data: ExecutiveInsight[]
   ) => void;
+
+  setAgentStatuses: (
+    data: AgentStatus[]
+  ) => void;
 }
 
 export const useCustomerStore =
@@ -80,6 +101,8 @@ export const useCustomerStore =
 
     executiveInsights: [],
 
+    agentStatuses: [],
+
     setCustomers: (data) =>
       set({ customers: data }),
 
@@ -91,4 +114,7 @@ export const useCustomerStore =
 
     setExecutiveInsights: (data) =>
       set({ executiveInsights: data }),
+
+    setAgentStatuses: (data) =>
+      set({ agentStatuses: data }),
   }));

@@ -1,5 +1,18 @@
 "use client";
 
+import { useState } from "react";
+
+import {
+  LayoutDashboard,
+  Upload,
+  BrainCircuit,
+  Users,
+  BarChart3,
+  Sparkles,
+  Menu,
+  X,
+} from "lucide-react";
+
 import { useCustomerStore } from "@/lib/store";
 
 import DataUpload from "@/components/dashboard/DataUpload";
@@ -17,16 +30,8 @@ import LiveAgentFlow from "@/components/ai/LiveAgentFlow";
 import AIAnalystChat from "@/components/ai/AIAnalystChat";
 import ExecutiveInsights from "@/components/ai/ExecutiveInsights";
 
-import {
-  LayoutDashboard,
-  Upload,
-  BrainCircuit,
-  Users,
-  BarChart3,
-  Sparkles,
-} from "lucide-react";
-
 const navItems = [
+
   {
     title: "Overview",
     icon: LayoutDashboard,
@@ -70,6 +75,12 @@ export default function Home() {
     (state) => state.predictions
   );
 
+  const [mobileMenu, setMobileMenu] =
+    useState(false);
+
+  const [activeSection, setActiveSection] =
+    useState("overview");
+
   const scrollToSection = (
     sectionId: string
   ) => {
@@ -82,6 +93,10 @@ export default function Home() {
       section.scrollIntoView({
         behavior: "smooth",
       });
+
+      setActiveSection(sectionId);
+
+      setMobileMenu(false);
     }
   };
 
@@ -89,13 +104,41 @@ export default function Home() {
 
     <main className="min-h-screen bg-[#050505] text-white flex">
 
-      {/* SIDEBAR */}
-      <aside className="w-72 h-screen sticky top-0 border-r border-white/10 bg-black/40 backdrop-blur-2xl p-6">
+      {/* MOBILE MENU */}
+      <button
+        onClick={() =>
+          setMobileMenu(!mobileMenu)
+        }
+        className="fixed top-5 left-5 z-50 lg:hidden bg-white/10 border border-white/10 p-3 rounded-xl backdrop-blur-xl"
+      >
 
-        {/* Logo */}
+        {mobileMenu ? (
+          <X size={22} />
+        ) : (
+          <Menu size={22} />
+        )}
+
+      </button>
+
+      {/* SIDEBAR */}
+      <aside
+        className={`
+          fixed lg:sticky top-0 left-0 z-40
+          h-screen w-72
+          bg-black/80 backdrop-blur-2xl
+          border-r border-white/10
+          p-6
+          transition-transform duration-300
+          ${mobileMenu
+            ? "translate-x-0"
+            : "-translate-x-full lg:translate-x-0"}
+        `}
+      >
+
+        {/* LOGO */}
         <div>
 
-          <h1 className="text-4xl font-bold tracking-tight">
+          <h1 className="text-4xl font-bold">
             Sensa
           </h1>
 
@@ -105,7 +148,7 @@ export default function Home() {
 
         </div>
 
-        {/* Status */}
+        {/* STATUS */}
         <div className="mt-8 bg-green-500/10 border border-green-500/20 rounded-2xl p-4">
 
           <p className="text-green-400 text-sm font-medium">
@@ -118,74 +161,85 @@ export default function Home() {
 
         </div>
 
-        {/* Navigation */}
+        {/* NAVIGATION */}
         <div className="mt-10 space-y-3">
 
-          {navItems.map((item, index) => {
+          {navItems.map(
+            (item, index) => {
 
-            const Icon = item.icon;
+              const Icon = item.icon;
 
-            return (
+              return (
 
-              <button
-                key={index}
-                onClick={() =>
-                  scrollToSection(item.id)
-                }
-                className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/5 transition border border-transparent hover:border-white/10"
-              >
+                <button
+                  key={index}
+                  onClick={() =>
+                    scrollToSection(
+                      item.id
+                    )
+                  }
+                  className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition border ${
+                    activeSection === item.id
+                      ? "bg-white/10 border-white/10 text-white"
+                      : "text-zinc-400 hover:text-white hover:bg-white/5 border-transparent"
+                  }`}
+                >
 
-                <Icon size={20} />
+                  <Icon size={20} />
 
-                {item.title}
+                  {item.title}
 
-              </button>
+                </button>
 
-            );
-          })}
+              );
+            }
+          )}
 
         </div>
 
       </aside>
 
       {/* MAIN CONTENT */}
-      <section className="flex-1 overflow-y-auto p-10">
+      <section className="flex-1 overflow-y-auto px-5 lg:px-10 py-10">
 
         {/* HERO */}
         <section id="overview">
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-8">
 
             <div>
 
-              <h2 className="text-5xl font-bold leading-tight">
+              <h2 className="text-4xl lg:text-6xl font-bold leading-tight">
+
                 Autonomous AI
                 <br />
                 Intelligence Platform
+
               </h2>
 
-              <p className="text-zinc-400 text-lg mt-4 max-w-2xl">
-                Predictive customer intelligence powered by
-                machine learning, analytics, and agentic AI workflows.
+              <p className="text-zinc-400 text-lg mt-5 max-w-2xl leading-relaxed">
+
+                Predictive customer intelligence powered by machine learning,
+                analytics, and agentic AI workflows.
+
               </p>
 
             </div>
 
-            <div className="bg-purple-500/10 border border-purple-500/20 px-6 py-4 rounded-2xl">
+            <div className="bg-purple-500/10 border border-purple-500/20 rounded-3xl p-6 w-full xl:w-[320px]">
 
-              <p className="text-purple-300 font-medium">
+              <p className="text-purple-300 font-semibold">
                 AI Agents Running
               </p>
 
-              <p className="text-zinc-500 text-sm mt-1">
-                Real-time analytics orchestration
+              <p className="text-zinc-500 text-sm mt-2">
+                Real-time customer intelligence orchestration active
               </p>
 
             </div>
 
           </div>
 
-          {/* KPI */}
           <KPISection />
 
         </section>
@@ -193,18 +247,33 @@ export default function Home() {
         {/* UPLOAD */}
         <section
           id="upload"
-          className="mt-14"
+          className="mt-16"
         >
 
-          <div className="mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
 
-            <h3 className="text-3xl font-bold">
-              Upload Intelligence Data
-            </h3>
+            <div>
 
-            <p className="text-zinc-500 mt-2">
-              Upload customer datasets to activate AI analytics workflows.
-            </p>
+              <h3 className="text-3xl font-bold">
+                Upload Intelligence Dataset
+              </h3>
+
+              <p className="text-zinc-500 mt-2">
+                Upload customer datasets to activate AI workflows
+              </p>
+
+            </div>
+
+            {/* DEMO CSV */}
+            <a
+              href="/customer_data.csv"
+              download
+              className="bg-purple-500 hover:bg-purple-600 transition px-6 py-4 rounded-2xl font-medium text-center"
+            >
+
+              Download Demo CSV
+
+            </a>
 
           </div>
 
@@ -212,20 +281,20 @@ export default function Home() {
 
         </section>
 
-        {/* AI AGENTS */}
+        {/* AGENTS */}
         <section
           id="agents"
-          className="mt-14"
+          className="mt-16"
         >
 
           <div className="mb-6">
 
             <h3 className="text-3xl font-bold">
-              Agentic AI Command Center
+              Agentic AI Systems
             </h3>
 
             <p className="text-zinc-500 mt-2">
-              Autonomous AI systems orchestrating customer intelligence.
+              Autonomous AI orchestration and business intelligence workflows
             </p>
 
           </div>
@@ -241,7 +310,7 @@ export default function Home() {
         {/* PREDICTIONS */}
         <section
           id="predictions"
-          className="mt-14"
+          className="mt-16"
         >
 
           <div className="mb-6">
@@ -251,40 +320,40 @@ export default function Home() {
             </h3>
 
             <p className="text-zinc-500 mt-2">
-              Machine learning powered churn prediction and customer scoring.
+              Machine learning powered churn and customer intelligence
             </p>
 
           </div>
 
-          <MLInsights predictions={predictions} />
+          <MLInsights
+            predictions={predictions}
+          />
 
           <ExecutiveInsights />
 
           <RFMEngine />
 
-          <AIAnalystChat />
-
         </section>
 
-        {/* ANALYTICS */}
+        {/* CUSTOMERS */}
         <section
           id="customers"
-          className="mt-14"
+          className="mt-16"
         >
 
           <div className="mb-6">
 
             <h3 className="text-3xl font-bold">
-              Customer Analytics
+              Customer Intelligence
             </h3>
 
             <p className="text-zinc-500 mt-2">
-              Revenue intelligence, segmentation, and customer behavior analysis.
+              Revenue analytics and customer behavior intelligence
             </p>
 
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
             <RevenueChart />
 
@@ -299,17 +368,17 @@ export default function Home() {
         {/* SIMULATION */}
         <section
           id="simulations"
-          className="mt-14 mb-20"
+          className="mt-16 mb-24"
         >
 
           <div className="mb-6">
 
             <h3 className="text-3xl font-bold">
-              AI Strategy Simulations
+              AI Strategy Simulation
             </h3>
 
             <p className="text-zinc-500 mt-2">
-              Simulate retention campaigns and strategic business decisions.
+              Simulate AI-driven retention and growth strategies
             </p>
 
           </div>
@@ -319,6 +388,13 @@ export default function Home() {
         </section>
 
       </section>
+
+      {/* FLOATING AI CHAT */}
+      <div className="hidden 2xl:block fixed right-6 bottom-6 w-[420px] z-50">
+
+        <AIAnalystChat />
+
+      </div>
 
     </main>
   );

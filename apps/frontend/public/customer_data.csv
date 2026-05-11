@@ -1,0 +1,21 @@
+customer_id,customer_name,last_purchase_days,order_frequency,total_spent,churn_risk,segment
+CUST001,Olivia Carter,12,24,12400,Low,VIP
+CUST002,Ethan Walker,67,8,4120,High,At-Risk
+CUST003,Sophia Bennett,21,15,8940,Medium,Loyal
+CUST004,Noah Thompson,5,3,1240,Low,New
+CUST005,Ava Mitchell,9,18,10200,Low,VIP
+CUST006,Liam Harris,74,6,2980,High,At-Risk
+CUST007,Emma Scott,16,11,6350,Medium,Loyal
+CUST008,James Turner,2,2,860,Low,New
+CUST009,Charlotte Adams,11,20,11750,Low,VIP
+CUST010,Benjamin Lewis,81,4,2100,High,At-Risk
+CUST011,Amelia Young,19,13,7220,Medium,Loyal
+CUST012,Lucas King,7,5,1540,Low,New
+CUST013,Mia Wright,14,22,13120,Low,VIP
+CUST014,Henry Green,58,7,3540,High,At-Risk
+CUST015,Harper Hall,25,10,6880,Medium,Loyal
+CUST016,Alexander Baker,3,1,520,Low,New
+CUST017,Evelyn Nelson,10,19,10900,Low,VIP
+CUST018,Daniel Hill,69,5,2760,High,At-Risk
+CUST019,Abigail Carter,17,12,7450,Medium,Loyal
+CUST020,Michael Roberts,4,2,980,Low,New
