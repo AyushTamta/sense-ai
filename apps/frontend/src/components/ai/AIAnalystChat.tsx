@@ -2,6 +2,12 @@
 
 import { useState } from "react";
 
+import {
+  X,
+  MessageSquare,
+  Minimize2,
+} from "lucide-react";
+
 import { useCustomerStore } from "@/lib/store";
 
 export default function AIAnalystChat() {
@@ -18,6 +24,9 @@ export default function AIAnalystChat() {
     useState("");
 
   const [thinking, setThinking] =
+    useState(false);
+
+  const [minimized, setMinimized] =
     useState(false);
 
   const [messages, setMessages] =
@@ -42,7 +51,7 @@ export default function AIAnalystChat() {
     const lower =
       query.toLowerCase();
 
-    // TOTAL CUSTOMERS
+    // CUSTOMERS
     if (
       lower.includes("customers")
     ) {
@@ -62,7 +71,7 @@ The AI engine recommends monitoring high-risk cohorts proactively.
       `;
     }
 
-    // HIGH RISK
+    // CHURN
     if (
       lower.includes("risk") ||
       lower.includes("churn")
@@ -81,17 +90,12 @@ The AI engine identified:
 • Elevated inactivity signals
 • Declining order frequency patterns
 
-Primary churn drivers:
-• low engagement
-• reduced purchase activity
-• inactivity periods
-
 Recommended action:
-launch retention incentives and personalized re-engagement campaigns.
+launch personalized retention campaigns and loyalty rewards.
       `;
     }
 
-    // VIP / REVENUE
+    // VIP
     if (
       lower.includes("vip") ||
       lower.includes("revenue")
@@ -117,16 +121,13 @@ launch retention incentives and personalized re-engagement campaigns.
         );
 
       return `
-VIP customers currently represent the strongest revenue-generating segment.
+VIP customers currently generate the strongest revenue concentration.
 
 Detected VIP customers:
 ${vipCustomers.length}
 
-Estimated VIP revenue contribution:
+Estimated VIP revenue:
 $${vipRevenue.toLocaleString()}
-
-AI recommendation:
-prioritize premium retention experiences and loyalty rewards for this cohort.
       `;
     }
 
@@ -167,45 +168,38 @@ ${Object.entries(
       `• ${segment}: ${count} customers`
   )
   .join("\n")}
-
-The AI engine recommends prioritizing At-Risk cohorts for retention campaigns.
       `;
     }
 
-    // RETENTION STRATEGY
+    // RETENTION
     if (
       lower.includes("retention") ||
       lower.includes("strategy")
     ) {
 
       return `
-Recommended AI retention strategy:
+Recommended retention strategy:
 
-1. Target high-risk inactive users
-2. Launch loyalty cashback campaigns
-3. Offer personalized VIP rewards
-4. Trigger re-engagement email workflows
-5. Monitor churn probability weekly
-
-Sensa predicts retention optimization opportunities across premium customer segments.
+1. Target inactive users
+2. Launch cashback campaigns
+3. Offer VIP rewards
+4. Improve re-engagement workflows
+5. Monitor churn weekly
       `;
     }
 
-    // DEFAULT RESPONSE
+    // DEFAULT
     return `
-Sensa AI Analyst detected predictive intelligence signals across:
-
+Sensa AI Analyst detected predictive intelligence patterns across:
 • churn probability
 • segmentation analytics
 • customer behavior
 • revenue intelligence
-• retention optimization
 
 Suggested prompts:
 • Which segment is highest value?
-• How many high-risk users exist?
 • Recommend retention strategies
-• Which customers generate most revenue?
+• How many high-risk users exist?
       `;
   };
 
@@ -230,10 +224,8 @@ Suggested prompts:
 
     setQuestion("");
 
-    // AI THINKING STATE
     setThinking(true);
 
-    // SIMULATED AI PROCESSING
     setTimeout(() => {
 
       const aiMessage = {
@@ -256,33 +248,67 @@ Suggested prompts:
     }, 1800);
   };
 
+  // MINIMIZED CHAT
+  if (minimized) {
+
+    return (
+
+      <button
+        onClick={() =>
+          setMinimized(false)
+        }
+        className="bg-purple-500 hover:bg-purple-600 transition rounded-2xl px-5 py-4 flex items-center gap-3 shadow-2xl"
+      >
+
+        <MessageSquare size={20} />
+
+        AI Analyst Assistant
+
+      </button>
+
+    );
+  }
+
   return (
 
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 mt-10">
+    <div className="bg-[#0b0b0b] border border-white/10 rounded-3xl shadow-2xl w-full h-[650px] flex flex-col overflow-hidden">
 
       {/* HEADER */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between p-5 border-b border-white/10">
 
         <div>
 
-          <h3 className="text-2xl font-bold text-white">
+          <h3 className="text-lg font-bold text-white">
             AI Analyst Assistant
           </h3>
 
-          <p className="text-zinc-400 text-sm mt-1">
-            Context-aware predictive business intelligence
+          <p className="text-zinc-500 text-xs mt-1">
+            Conversational business intelligence
           </p>
 
         </div>
 
-        <div className="text-green-400 text-sm">
-          ● AI Online
+        <div className="flex items-center gap-3">
+
+          <button
+            onClick={() =>
+              setMinimized(true)
+            }
+            className="text-zinc-400 hover:text-white transition"
+          >
+
+            <Minimize2 size={18} />
+
+          </button>
+
+          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+
         </div>
 
       </div>
 
-      {/* CHAT AREA */}
-      <div className="bg-black/20 border border-white/10 rounded-3xl p-5 h-[500px] overflow-y-auto space-y-5">
+      {/* CHAT */}
+      <div className="flex-1 overflow-y-auto p-5 space-y-5">
 
         {messages.map(
           (message, index) => (
@@ -297,7 +323,7 @@ Suggested prompts:
             >
 
               <div
-                className={`max-w-[80%] rounded-2xl px-5 py-4 whitespace-pre-line ${
+                className={`max-w-[85%] rounded-2xl px-5 py-4 whitespace-pre-line ${
                   message.role === "user"
                     ? "bg-purple-500 text-white"
                     : "bg-white/5 border border-white/10 text-zinc-200"
@@ -313,7 +339,7 @@ Suggested prompts:
           )
         )}
 
-        {/* THINKING STATE */}
+        {/* THINKING */}
         {thinking && (
 
           <div className="flex justify-start">
@@ -345,7 +371,7 @@ Suggested prompts:
       </div>
 
       {/* INPUT */}
-      <div className="mt-6 flex gap-4">
+      <div className="p-5 border-t border-white/10 flex gap-3">
 
         <input
           value={question}
