@@ -2,25 +2,56 @@
 
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true,
+});
 
 export default function SimulationPanel() {
 
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const runSimulation = () => {
+  const runSimulation = async () => {
 
     if (!query) return;
 
-    setResponse(`
-Predicted Impact:
-• Churn reduction: 12%
-• Revenue increase: 8.4%
-• High-value retention improvement detected
+    setLoading(true);
+    setResponse("");
 
-AI Recommendation:
-Launch campaign for VIP customer segment with personalized rewards.
-    `);
+    try {
+
+      const completion = await client.chat.completions.create({
+        model: "gpt-4.1-mini",
+
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are an enterprise AI strategy agent for a customer intelligence platform. Generate strategic business recommendations, churn analysis, revenue impact predictions, and customer retention insights.",
+          },
+
+          {
+            role: "user",
+            content: query,
+          },
+        ],
+      });
+
+      setResponse(
+        completion.choices[0]?.message?.content || "No response generated."
+      );
+
+    } catch (error) {
+
+      setResponse("AI simulation failed.");
+
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -51,7 +82,7 @@ Launch campaign for VIP customer segment with personalized rewards.
         <textarea
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Example: What if we give VIP customers a 15% loyalty reward?"
+          placeholder="Example: What if we offer VIP customers a 15% loyalty reward?"
           className="w-full h-32 bg-black/30 border border-white/10 rounded-2xl p-4 text-white outline-none resize-none"
         />
 
@@ -59,7 +90,7 @@ Launch campaign for VIP customer segment with personalized rewards.
           onClick={runSimulation}
           className="mt-4 bg-purple-500 hover:bg-purple-400 transition px-6 py-3 rounded-xl font-medium"
         >
-          Run AI Simulation
+          {loading ? "Running AI..." : "Run AI Simulation"}
         </button>
 
       </div>
