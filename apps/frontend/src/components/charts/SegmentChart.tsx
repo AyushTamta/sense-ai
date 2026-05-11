@@ -1,5 +1,7 @@
 "use client";
 
+import { useCustomerStore } from "@/lib/store";
+
 import {
   PieChart,
   Pie,
@@ -7,13 +9,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-
-const data = [
-  { name: "VIP Customers", value: 2431 },
-  { name: "Loyal Customers", value: 12320 },
-  { name: "At-Risk Customers", value: 8102 },
-  { name: "New Customers", value: 5210 },
-];
 
 const COLORS = [
   "#a855f7",
@@ -24,8 +19,29 @@ const COLORS = [
 
 export default function SegmentChart() {
 
+  const customers = useCustomerStore(
+    (state) => state.customers
+  );
+
+  const segmentCounts: Record<string, number> = {};
+
+  customers.forEach((customer: any) => {
+
+    const segment = customer.segment || "Unknown";
+
+    segmentCounts[segment] =
+      (segmentCounts[segment] || 0) + 1;
+  });
+
+  const data = Object.entries(segmentCounts).map(
+    ([name, value]) => ({
+      name,
+      value,
+    })
+  );
+
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 h-[400px]">
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 h-[400px] mt-10">
 
       <div className="flex items-center justify-between mb-6">
 
@@ -45,35 +61,47 @@ export default function SegmentChart() {
 
       </div>
 
-      <ResponsiveContainer width="100%" height="80%">
+      {customers.length === 0 ? (
 
-        <PieChart>
+        <div className="h-[250px] flex items-center justify-center text-zinc-500 border border-dashed border-white/10 rounded-2xl">
 
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            outerRadius={110}
-            dataKey="value"
-            label
-          >
+          Upload customer data to generate analytics
 
-            {data.map((entry, index) => (
+        </div>
 
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
+      ) : (
 
-            ))}
+        <ResponsiveContainer width="100%" height="80%">
 
-          </Pie>
+          <PieChart>
 
-          <Tooltip />
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              outerRadius={110}
+              dataKey="value"
+              label
+            >
 
-        </PieChart>
+              {data.map((entry, index) => (
 
-      </ResponsiveContainer>
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+
+              ))}
+
+            </Pie>
+
+            <Tooltip />
+
+          </PieChart>
+
+        </ResponsiveContainer>
+
+      )}
 
     </div>
   );

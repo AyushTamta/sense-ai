@@ -1,40 +1,12 @@
 "use client";
 
-const customers = [
-  {
-    name: "Olivia Carter",
-    segment: "VIP",
-    churn: "Low",
-    revenue: "$12,400",
-    insight: "High retention probability",
-  },
-
-  {
-    name: "Ethan Walker",
-    segment: "At-Risk",
-    churn: "High",
-    revenue: "$4,120",
-    insight: "Retention campaign recommended",
-  },
-
-  {
-    name: "Sophia Bennett",
-    segment: "Loyal",
-    churn: "Medium",
-    revenue: "$8,940",
-    insight: "Upsell opportunity detected",
-  },
-
-  {
-    name: "Noah Thompson",
-    segment: "New",
-    churn: "Low",
-    revenue: "$1,240",
-    insight: "Onboarding sequence active",
-  },
-];
+import { useCustomerStore } from "@/lib/store";
 
 export default function CustomerTable() {
+
+  const customers = useCustomerStore(
+    (state) => state.customers
+  );
 
   return (
     <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mt-10">
@@ -53,84 +25,91 @@ export default function CustomerTable() {
         </div>
 
         <div className="text-green-400 text-sm">
-          ● Live Data
+          ● Live Dataset
         </div>
 
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
+      {/* Empty State */}
+      {customers.length === 0 ? (
 
-        <table className="w-full">
+        <div className="h-52 flex items-center justify-center text-zinc-500 border border-dashed border-white/10 rounded-2xl">
 
-          <thead>
+          Upload a customer dataset to begin analytics
 
-            <tr className="text-left border-b border-white/10 text-zinc-400 text-sm">
+        </div>
 
-              <th className="pb-4">Customer</th>
-              <th className="pb-4">Segment</th>
-              <th className="pb-4">Churn Risk</th>
-              <th className="pb-4">Revenue</th>
-              <th className="pb-4">AI Insight</th>
+      ) : (
 
-            </tr>
+        <div className="overflow-x-auto">
 
-          </thead>
+          <table className="w-full">
 
-          <tbody>
+            <thead>
 
-            {customers.map((customer, index) => (
+              <tr className="text-left border-b border-white/10 text-zinc-400 text-sm">
 
-              <tr
-                key={index}
-                className="border-b border-white/5 hover:bg-white/5 transition"
-              >
-
-                <td className="py-5 text-white font-medium">
-                  {customer.name}
-                </td>
-
-                <td className="py-5">
-
-                  <span className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">
-                    {customer.segment}
-                  </span>
-
-                </td>
-
-                <td className="py-5">
-
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      customer.churn === "High"
-                        ? "bg-red-500/20 text-red-300"
-                        : customer.churn === "Medium"
-                        ? "bg-yellow-500/20 text-yellow-300"
-                        : "bg-green-500/20 text-green-300"
-                    }`}
-                  >
-                    {customer.churn}
-                  </span>
-
-                </td>
-
-                <td className="py-5 text-white">
-                  {customer.revenue}
-                </td>
-
-                <td className="py-5 text-zinc-300">
-                  {customer.insight}
-                </td>
+                <th className="pb-4">Customer</th>
+                <th className="pb-4">Segment</th>
+                <th className="pb-4">Churn Risk</th>
+                <th className="pb-4">Revenue</th>
 
               </tr>
 
-            ))}
+            </thead>
 
-          </tbody>
+            <tbody>
 
-        </table>
+              {customers.map((customer: any, index: number) => (
 
-      </div>
+                <tr
+                  key={index}
+                  className="border-b border-white/5 hover:bg-white/5 transition"
+                >
+
+                  <td className="py-5 text-white font-medium">
+                    {customer.customer_name}
+                  </td>
+
+                  <td className="py-5">
+
+                    <span className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">
+                      {customer.segment}
+                    </span>
+
+                  </td>
+
+                  <td className="py-5">
+
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        customer.churn_risk === "High"
+                          ? "bg-red-500/20 text-red-300"
+                          : customer.churn_risk === "Medium"
+                          ? "bg-yellow-500/20 text-yellow-300"
+                          : "bg-green-500/20 text-green-300"
+                      }`}
+                    >
+                      {customer.churn_risk}
+                    </span>
+
+                  </td>
+
+                  <td className="py-5 text-white">
+                    ${customer.total_spent}
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      )}
 
     </div>
   );

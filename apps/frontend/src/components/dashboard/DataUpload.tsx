@@ -2,19 +2,18 @@
 
 import { UploadCloud } from "lucide-react";
 import { useState } from "react";
-import Papa from "papaparse";
-
 import { useCustomerStore } from "@/lib/store";
 
 export default function DataUpload() {
 
   const [fileName, setFileName] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const setCustomers = useCustomerStore(
-    (state) => state.setCustomers
-  );
+  const setPredictions = useCustomerStore(
+  (state) => state.setPredictions
+);
 
-  const handleUpload = (
+  const handleUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
 
@@ -24,25 +23,65 @@ export default function DataUpload() {
 
     setFileName(file.name);
 
-    Papa.parse(file, {
+    setLoading(true);
 
-      header: true,
+    try {
 
-      complete: (results) => {
+      const formData = new FormData();
 
-        setCustomers(results.data as any);
+      formData.append("file", file);
 
-        console.log(results.data);
-      },
-    });
+      const response = await fetch(
+        "http://127.0.0.1:8000/analyze",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+
+      setPredictions({
+  predicted_churn_customers:
+    data.predicted_churn_customers,
+
+  average_churn_probability:
+    data.average_churn_probability,
+});
+
+      console.log("Backend Analysis:", data);
+
+      alert(`
+Analysis Complete
+
+Customers: ${data.total_customers}
+
+Revenue: $${data.total_revenue}
+
+High Risk Customers: ${data.high_risk_customers}
+
+VIP Customers: ${data.vip_customers}
+      `);
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert("Backend analysis failed.");
+
+    }
+
+    setLoading(false);
   };
 
   return (
     <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mt-10">
 
+      {/* Header */}
       <div className="flex items-center justify-between">
 
         <div>
+
           <h3 className="text-2xl font-semibold text-white">
             Customer Dataset Upload
           </h3>
@@ -50,6 +89,7 @@ export default function DataUpload() {
           <p className="text-zinc-400 text-sm mt-1">
             Upload CSV datasets to trigger AI analytics workflows
           </p>
+
         </div>
 
         <div className="text-blue-400 text-sm">
@@ -58,6 +98,7 @@ export default function DataUpload() {
 
       </div>
 
+      {/* Upload Box */}
       <label
         className="mt-6 border-2 border-dashed border-white/10 rounded-2xl h-52 flex flex-col items-center justify-center cursor-pointer hover:border-purple-500/40 transition bg-black/20"
       >
@@ -68,7 +109,11 @@ export default function DataUpload() {
         />
 
         <p className="text-white mt-4 font-medium">
-          Click to upload customer dataset
+
+          {loading
+            ? "AI analyzing dataset..."
+            : "Click to upload customer dataset"}
+
         </p>
 
         <p className="text-zinc-500 text-sm mt-2">
@@ -83,6 +128,7 @@ export default function DataUpload() {
 
       </label>
 
+      {/* Upload Success */}
       {fileName && (
 
         <div className="mt-6 bg-green-500/10 border border-green-500/20 rounded-2xl p-4">
