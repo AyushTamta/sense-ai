@@ -45,19 +45,12 @@ async def analyze_dataset(
         df[df["segment"] == "VIP"]
     )
 
-    # ---------------------------
-    # MACHINE LEARNING SECTION
-    # ---------------------------
-
-    # Create fake target variable
-    # High churn = 1
-    # Others = 0
+    # ML SECTION
 
     df["target"] = (
         df["churn_risk"] == "High"
     ).astype(int)
 
-    # Features
     X = df[
         [
             "last_purchase_days",
@@ -68,21 +61,17 @@ async def analyze_dataset(
 
     y = df["target"]
 
-    # Train model
     model = LogisticRegression()
 
     model.fit(X, y)
 
-    # Predict churn probability
     probabilities = model.predict_proba(X)[:, 1]
 
-    # Average probability
     avg_probability = round(
         np.mean(probabilities) * 100,
         2
     )
 
-    # Customers predicted at risk
     predicted_risk = int(
         np.sum(probabilities > 0.5)
     )
@@ -102,4 +91,9 @@ async def analyze_dataset(
         "predicted_churn_customers": predicted_risk,
 
         "average_churn_probability": avg_probability,
+
+        # Customer Dataset
+        "customers": df.to_dict(
+            orient="records"
+        ),
     }

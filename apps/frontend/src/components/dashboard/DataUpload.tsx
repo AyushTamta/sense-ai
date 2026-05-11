@@ -2,16 +2,22 @@
 
 import { UploadCloud } from "lucide-react";
 import { useState } from "react";
+
 import { useCustomerStore } from "@/lib/store";
 
 export default function DataUpload() {
 
   const [fileName, setFileName] = useState("");
+
   const [loading, setLoading] = useState(false);
 
+  const setCustomers = useCustomerStore(
+    (state) => state.setCustomers
+  );
+
   const setPredictions = useCustomerStore(
-  (state) => state.setPredictions
-);
+    (state) => state.setPredictions
+  );
 
   const handleUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -39,17 +45,32 @@ export default function DataUpload() {
         }
       );
 
+      if (!response.ok) {
+
+        throw new Error(
+          "Backend request failed"
+        );
+      }
+
       const data = await response.json();
 
+      console.log(
+        "Backend Analysis:",
+        data
+      );
+
+      // Store customer data
+      setCustomers(data.customers);
+
+      // Store ML predictions
       setPredictions({
-  predicted_churn_customers:
-    data.predicted_churn_customers,
 
-  average_churn_probability:
-    data.average_churn_probability,
-});
+        predicted_churn_customers:
+          data.predicted_churn_customers,
 
-      console.log("Backend Analysis:", data);
+        average_churn_probability:
+          data.average_churn_probability,
+      });
 
       alert(`
 Analysis Complete
@@ -61,20 +82,26 @@ Revenue: $${data.total_revenue}
 High Risk Customers: ${data.high_risk_customers}
 
 VIP Customers: ${data.vip_customers}
+
+Predicted Churn Customers: ${data.predicted_churn_customers}
+
+Average Churn Probability: ${data.average_churn_probability}%
       `);
 
     } catch (error) {
 
       console.error(error);
 
-      alert("Backend analysis failed.");
-
+      alert(
+        "Backend analysis failed."
+      );
     }
 
     setLoading(false);
   };
 
   return (
+
     <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mt-10">
 
       {/* Header */}
