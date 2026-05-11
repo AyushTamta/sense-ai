@@ -24,11 +24,33 @@ interface PredictionData {
   average_churn_probability?: number;
 }
 
+interface AgentStep {
+
+  id: number;
+
+  label: string;
+
+  completed: boolean;
+}
+
+interface ExecutiveInsight {
+
+  id: number;
+
+  title: string;
+
+  description: string;
+}
+
 interface StoreState {
 
   customers: CustomerData[];
 
   predictions: PredictionData;
+
+  agentSteps: AgentStep[];
+
+  executiveInsights: ExecutiveInsight[];
 
   setCustomers: (
     data: CustomerData[]
@@ -36,6 +58,14 @@ interface StoreState {
 
   setPredictions: (
     data: PredictionData
+  ) => void;
+
+  setAgentSteps: (
+    data: AgentStep[]
+  ) => void;
+
+  setExecutiveInsights: (
+    data: ExecutiveInsight[]
   ) => void;
 }
 
@@ -46,9 +76,19 @@ export const useCustomerStore =
 
     predictions: {},
 
+    agentSteps: [],
+
+    executiveInsights: [],
+
     setCustomers: (data) =>
       set({ customers: data }),
 
     setPredictions: (data) =>
       set({ predictions: data }),
+
+    setAgentSteps: (data) =>
+      set({ agentSteps: data }),
+
+    setExecutiveInsights: (data) =>
+      set({ executiveInsights: data }),
   }));

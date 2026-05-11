@@ -1,6 +1,7 @@
 "use client";
 
 import { UploadCloud } from "lucide-react";
+
 import { useState } from "react";
 
 import { useCustomerStore } from "@/lib/store";
@@ -19,6 +20,16 @@ export default function DataUpload() {
     (state) => state.setPredictions
   );
 
+  const setAgentSteps = useCustomerStore(
+    (state) => state.setAgentSteps
+  );
+
+  const setExecutiveInsights =
+    useCustomerStore(
+      (state) =>
+        state.setExecutiveInsights
+    );
+
   const handleUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -30,6 +41,45 @@ export default function DataUpload() {
     setFileName(file.name);
 
     setLoading(true);
+
+    // START LIVE AGENT FLOW
+    setAgentSteps([
+
+      {
+        id: 1,
+        label: "Dataset received",
+        completed: true,
+      },
+
+      {
+        id: 2,
+        label:
+          "Segment Agent analyzing customer cohorts",
+        completed: false,
+      },
+
+      {
+        id: 3,
+        label:
+          "Forecast Agent running churn prediction",
+        completed: false,
+      },
+
+      {
+        id: 4,
+        label:
+          "Executive Agent generating insights",
+        completed: false,
+      },
+
+      {
+        id: 5,
+        label:
+          "ML engine calculating probabilities",
+        completed: false,
+      },
+
+    ]);
 
     try {
 
@@ -59,10 +109,10 @@ export default function DataUpload() {
         data
       );
 
-      // Store customer data
+      // STORE CUSTOMER DATA
       setCustomers(data.customers);
 
-      // Store ML predictions
+      // STORE ML PREDICTIONS
       setPredictions({
 
         predicted_churn_customers:
@@ -71,6 +121,140 @@ export default function DataUpload() {
         average_churn_probability:
           data.average_churn_probability,
       });
+
+      // EXECUTIVE INSIGHTS
+      const vipCustomers =
+        data.customers.filter(
+          (customer: any) =>
+            customer.segment === "VIP"
+        );
+
+      const vipRevenue =
+        vipCustomers.reduce(
+          (
+            acc: number,
+            customer: any
+          ) =>
+            acc +
+            Number(
+              customer.total_spent
+            ),
+          0
+        );
+
+      const totalRevenue =
+        data.customers.reduce(
+          (
+            acc: number,
+            customer: any
+          ) =>
+            acc +
+            Number(
+              customer.total_spent
+            ),
+          0
+        );
+
+      const vipRevenuePercent =
+        (
+          (vipRevenue /
+            totalRevenue) *
+          100
+        ).toFixed(1);
+
+      setExecutiveInsights([
+
+        {
+          id: 1,
+
+          title:
+            "Revenue Concentration Detected",
+
+          description:
+            `VIP customers currently contribute ${vipRevenuePercent}% of total platform revenue.`,
+        },
+
+        {
+          id: 2,
+
+          title:
+            "Churn Risk Escalation",
+
+          description:
+            `${data.predicted_churn_customers} customers were identified as high-risk churn candidates by the ML engine.`,
+        },
+
+        {
+          id: 3,
+
+          title:
+            "Retention Opportunity",
+
+          description:
+            "Sensa recommends launching personalized retention campaigns targeting inactive and At-Risk users.",
+        },
+
+        {
+          id: 4,
+
+          title:
+            "AI Growth Recommendation",
+
+          description:
+            "Customer segmentation analysis indicates strong expansion potential among Loyal and VIP cohorts.",
+        },
+
+      ]);
+
+      // COMPLETE AI FLOW
+      setTimeout(() => {
+
+        setAgentSteps([
+
+          {
+            id: 1,
+            label: "Dataset received",
+            completed: true,
+          },
+
+          {
+            id: 2,
+            label:
+              "Segment Agent analyzing customer cohorts",
+            completed: true,
+          },
+
+          {
+            id: 3,
+            label:
+              "Forecast Agent running churn prediction",
+            completed: true,
+          },
+
+          {
+            id: 4,
+            label:
+              "Executive Agent generating insights",
+            completed: true,
+          },
+
+          {
+            id: 5,
+            label:
+              "ML engine calculating probabilities",
+            completed: true,
+          },
+
+          {
+            id: 6,
+            label:
+              "Intelligence pipeline complete",
+            completed: true,
+          },
+
+        ]);
+
+      }, 2500);
 
       alert(`
 Analysis Complete
@@ -102,49 +286,51 @@ Average Churn Probability: ${data.average_churn_probability}%
 
   return (
 
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mt-10">
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
 
-      {/* Header */}
+      {/* HEADER */}
       <div className="flex items-center justify-between">
 
         <div>
 
-          <h3 className="text-2xl font-semibold text-white">
-            Customer Dataset Upload
+          <h3 className="text-3xl font-bold text-white">
+            Upload Intelligence Dataset
           </h3>
 
-          <p className="text-zinc-400 text-sm mt-1">
-            Upload CSV datasets to trigger AI analytics workflows
+          <p className="text-zinc-400 text-sm mt-2">
+            Activate AI analytics workflows with customer intelligence data
           </p>
 
         </div>
 
-        <div className="text-blue-400 text-sm">
-          CSV • XLSX • JSON
+        <div className="bg-purple-500/10 border border-purple-500/20 px-4 py-2 rounded-xl text-purple-300 text-sm">
+
+          AI Pipeline Ready
+
         </div>
 
       </div>
 
-      {/* Upload Box */}
+      {/* UPLOAD BOX */}
       <label
-        className="mt-6 border-2 border-dashed border-white/10 rounded-2xl h-52 flex flex-col items-center justify-center cursor-pointer hover:border-purple-500/40 transition bg-black/20"
+        className="mt-8 border-2 border-dashed border-white/10 rounded-3xl h-72 flex flex-col items-center justify-center cursor-pointer hover:border-purple-500/40 transition bg-black/20"
       >
 
         <UploadCloud
-          size={42}
+          size={54}
           className="text-purple-400"
         />
 
-        <p className="text-white mt-4 font-medium">
+        <p className="text-white mt-6 text-xl font-semibold">
 
           {loading
-            ? "AI analyzing dataset..."
+            ? "AI agents analyzing dataset..."
             : "Click to upload customer dataset"}
 
         </p>
 
-        <p className="text-zinc-500 text-sm mt-2">
-          Drag & drop your CSV file here
+        <p className="text-zinc-500 text-sm mt-3">
+          CSV • XLSX • JSON supported
         </p>
 
         <input
@@ -155,16 +341,16 @@ Average Churn Probability: ${data.average_churn_probability}%
 
       </label>
 
-      {/* Upload Success */}
+      {/* SUCCESS STATE */}
       {fileName && (
 
-        <div className="mt-6 bg-green-500/10 border border-green-500/20 rounded-2xl p-4">
+        <div className="mt-6 bg-green-500/10 border border-green-500/20 rounded-2xl p-5">
 
           <p className="text-green-300 font-medium">
             Dataset uploaded successfully
           </p>
 
-          <p className="text-zinc-400 text-sm mt-1">
+          <p className="text-zinc-400 text-sm mt-2">
             {fileName}
           </p>
 

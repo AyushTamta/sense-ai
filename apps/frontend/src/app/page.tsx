@@ -1,30 +1,68 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useCustomerStore } from "@/lib/store";
 
+import DataUpload from "@/components/dashboard/DataUpload";
+import KPISection from "@/components/dashboard/KPISection";
 import RevenueChart from "@/components/charts/RevenueChart";
 import SegmentChart from "@/components/charts/SegmentChart";
+import CustomerTable from "@/components/dashboard/CustomerTable";
 
-import SimulationPanel from "@/components/ai/SimulationPanel";
 import AgentPanel from "@/components/ai/AgentPanel";
 import InsightEngine from "@/components/ai/InsightEngine";
 import RFMEngine from "@/components/ai/RFMEngine";
 import MLInsights from "@/components/ai/MLInsights";
-
-import CustomerTable from "@/components/dashboard/CustomerTable";
-import DataUpload from "@/components/dashboard/DataUpload";
-import KPISection from "@/components/dashboard/KPISection";
-
-import { useCustomerStore } from "@/lib/store";
+import SimulationPanel from "@/components/ai/SimulationPanel";
+import LiveAgentFlow from "@/components/ai/LiveAgentFlow";
+import AIAnalystChat from "@/components/ai/AIAnalystChat";
+import ExecutiveInsights from "@/components/ai/ExecutiveInsights";
 
 import {
   LayoutDashboard,
-  Users,
+  Upload,
   BrainCircuit,
+  Users,
   BarChart3,
   Sparkles,
-  FileText,
 } from "lucide-react";
+
+const navItems = [
+  {
+    title: "Overview",
+    icon: LayoutDashboard,
+    id: "overview",
+  },
+
+  {
+    title: "Upload Center",
+    icon: Upload,
+    id: "upload",
+  },
+
+  {
+    title: "AI Agents",
+    icon: BrainCircuit,
+    id: "agents",
+  },
+
+  {
+    title: "Predictions",
+    icon: BarChart3,
+    id: "predictions",
+  },
+
+  {
+    title: "Customers",
+    icon: Users,
+    id: "customers",
+  },
+
+  {
+    title: "Simulations",
+    icon: Sparkles,
+    id: "simulations",
+  },
+];
 
 export default function Home() {
 
@@ -32,247 +70,255 @@ export default function Home() {
     (state) => state.predictions
   );
 
+  const scrollToSection = (
+    sectionId: string
+  ) => {
+
+    const section =
+      document.getElementById(sectionId);
+
+    if (section) {
+
+      section.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
 
-    <main className="min-h-screen bg-[#0a0a0a] text-white relative overflow-hidden">
+    <main className="min-h-screen bg-[#050505] text-white flex">
 
-      {/* Background Glow Effects */}
-      <div className="absolute top-[-200px] right-[-100px] w-[500px] h-[500px] bg-purple-500/20 blur-[120px] rounded-full" />
+      {/* SIDEBAR */}
+      <aside className="w-72 h-screen sticky top-0 border-r border-white/10 bg-black/40 backdrop-blur-2xl p-6">
 
-      <div className="absolute bottom-[-200px] left-[-100px] w-[500px] h-[500px] bg-blue-500/20 blur-[120px] rounded-full" />
+        {/* Logo */}
+        <div>
 
-      <div className="flex relative z-10">
+          <h1 className="text-4xl font-bold tracking-tight">
+            Sensa
+          </h1>
 
-        {/* Sidebar */}
-        <aside className="w-64 min-h-screen border-r border-white/10 p-6 backdrop-blur-xl">
+          <p className="text-zinc-500 text-sm mt-2">
+            AI Customer Intelligence Platform
+          </p>
 
-          {/* Logo */}
-          <div>
+        </div>
 
-            <h1 className="text-3xl font-bold tracking-tight">
-              Sensa
-            </h1>
+        {/* Status */}
+        <div className="mt-8 bg-green-500/10 border border-green-500/20 rounded-2xl p-4">
 
-            <p className="text-zinc-500 text-sm mt-1">
-              AI Intelligence Platform
-            </p>
+          <p className="text-green-400 text-sm font-medium">
+            ● AI Systems Operational
+          </p>
 
-          </div>
+          <p className="text-zinc-500 text-xs mt-1">
+            ML + Agentic Intelligence Active
+          </p>
 
-          {/* Navigation */}
-          <div className="mt-10 space-y-3">
+        </div>
 
-            <div className="flex items-center gap-3 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white">
+        {/* Navigation */}
+        <div className="mt-10 space-y-3">
 
-              <LayoutDashboard size={18} />
+          {navItems.map((item, index) => {
 
-              Dashboard
+            const Icon = item.icon;
 
-            </div>
+            return (
 
-            <div className="flex items-center gap-3 text-zinc-400 hover:text-white hover:bg-white/5 transition cursor-pointer px-4 py-3 rounded-xl">
+              <button
+                key={index}
+                onClick={() =>
+                  scrollToSection(item.id)
+                }
+                className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/5 transition border border-transparent hover:border-white/10"
+              >
 
-              <Users size={18} />
+                <Icon size={20} />
 
-              Customers
+                {item.title}
 
-            </div>
+              </button>
 
-            <div className="flex items-center gap-3 text-zinc-400 hover:text-white hover:bg-white/5 transition cursor-pointer px-4 py-3 rounded-xl">
+            );
+          })}
 
-              <BarChart3 size={18} />
+        </div>
 
-              Predictions
+      </aside>
 
-            </div>
+      {/* MAIN CONTENT */}
+      <section className="flex-1 overflow-y-auto p-10">
 
-            <div className="flex items-center gap-3 text-zinc-400 hover:text-white hover:bg-white/5 transition cursor-pointer px-4 py-3 rounded-xl">
+        {/* HERO */}
+        <section id="overview">
 
-              <BrainCircuit size={18} />
-
-              AI Agents
-
-            </div>
-
-            <div className="flex items-center gap-3 text-zinc-400 hover:text-white hover:bg-white/5 transition cursor-pointer px-4 py-3 rounded-xl">
-
-              <Sparkles size={18} />
-
-              Simulations
-
-            </div>
-
-            <div className="flex items-center gap-3 text-zinc-400 hover:text-white hover:bg-white/5 transition cursor-pointer px-4 py-3 rounded-xl">
-
-              <FileText size={18} />
-
-              Reports
-
-            </div>
-
-          </div>
-
-        </aside>
-
-        {/* Main Dashboard */}
-        <section className="flex-1 p-8 overflow-y-auto">
-
-          {/* Header */}
           <div className="flex items-center justify-between">
 
             <div>
 
-              <h2 className="text-4xl font-bold">
-                AI Intelligence Dashboard
+              <h2 className="text-5xl font-bold leading-tight">
+                Autonomous AI
+                <br />
+                Intelligence Platform
               </h2>
 
-              <p className="text-zinc-400 mt-2">
-                Autonomous predictive customer intelligence platform
+              <p className="text-zinc-400 text-lg mt-4 max-w-2xl">
+                Predictive customer intelligence powered by
+                machine learning, analytics, and agentic AI workflows.
               </p>
 
             </div>
 
-            <div className="bg-purple-500/20 text-purple-300 px-4 py-2 rounded-xl border border-purple-500/30 backdrop-blur-md">
+            <div className="bg-purple-500/10 border border-purple-500/20 px-6 py-4 rounded-2xl">
 
-              AI Agents Active
+              <p className="text-purple-300 font-medium">
+                AI Agents Running
+              </p>
+
+              <p className="text-zinc-500 text-sm mt-1">
+                Real-time analytics orchestration
+              </p>
 
             </div>
 
           </div>
 
-          {/* Dynamic KPI Section */}
+          {/* KPI */}
           <KPISection />
 
-          {/* Top Grid */}
-          <div className="grid grid-cols-3 gap-6 mt-10">
+        </section>
 
-            {/* AI Command Center */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="col-span-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6"
-            >
+        {/* UPLOAD */}
+        <section
+          id="upload"
+          className="mt-14"
+        >
 
-              <div className="flex items-center justify-between">
+          <div className="mb-6">
 
-                <h3 className="text-2xl font-semibold">
-                  AI Command Center
-                </h3>
+            <h3 className="text-3xl font-bold">
+              Upload Intelligence Data
+            </h3>
 
-                <div className="text-green-400 text-sm">
-                  ● Live Agents
-                </div>
-
-              </div>
-
-              <div className="mt-6 space-y-4 text-zinc-300">
-
-                <div className="bg-black/30 p-4 rounded-xl border border-white/5 hover:border-purple-500/20 transition">
-                  ✓ Segment Agent analyzing high-value customers
-                </div>
-
-                <div className="bg-black/30 p-4 rounded-xl border border-white/5 hover:border-blue-500/20 transition">
-                  ✓ Forecast Agent predicting churn probability
-                </div>
-
-                <div className="bg-black/30 p-4 rounded-xl border border-white/5 hover:border-pink-500/20 transition">
-                  ✓ Strategy Agent simulating retention campaigns
-                </div>
-
-                <div className="bg-black/30 p-4 rounded-xl border border-white/5 hover:border-green-500/20 transition">
-                  ✓ Executive Agent generating business insights
-                </div>
-
-              </div>
-
-            </motion.div>
-
-            {/* AI Insights */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6"
-            >
-
-              <h3 className="text-xl font-semibold">
-                AI Insights
-              </h3>
-
-              <div className="mt-6 space-y-5">
-
-                <div>
-
-                  <p className="text-zinc-400 text-sm">
-                    High Value Segment
-                  </p>
-
-                  <p className="text-lg font-semibold mt-1">
-                    VIP Customers +18%
-                  </p>
-
-                </div>
-
-                <div>
-
-                  <p className="text-zinc-400 text-sm">
-                    Churn Alert
-                  </p>
-
-                  <p className="text-lg font-semibold mt-1 text-red-400">
-                    Risk patterns detected
-                  </p>
-
-                </div>
-
-                <div>
-
-                  <p className="text-zinc-400 text-sm">
-                    Recommended Action
-                  </p>
-
-                  <p className="text-lg font-semibold mt-1 text-purple-300">
-                    Launch retention rewards
-                  </p>
-
-                </div>
-
-              </div>
-
-            </motion.div>
+            <p className="text-zinc-500 mt-2">
+              Upload customer datasets to activate AI analytics workflows.
+            </p>
 
           </div>
 
-          {/* Revenue */}
-          <RevenueChart />
-
-          {/* Segment Chart */}
-          <SegmentChart />
-
-          {/* Customer Table */}
-          <CustomerTable />
-
-          {/* AI Agents */}
-          <AgentPanel />
-
-          {/* Upload */}
           <DataUpload />
 
-          {/* Insight Engine */}
+        </section>
+
+        {/* AI AGENTS */}
+        <section
+          id="agents"
+          className="mt-14"
+        >
+
+          <div className="mb-6">
+
+            <h3 className="text-3xl font-bold">
+              Agentic AI Command Center
+            </h3>
+
+            <p className="text-zinc-500 mt-2">
+              Autonomous AI systems orchestrating customer intelligence.
+            </p>
+
+          </div>
+
+          <AgentPanel />
+
+          <LiveAgentFlow />
+
           <InsightEngine />
 
-          {/* RFM Engine */}
-          <RFMEngine />
+        </section>
 
-          {/* ML Intelligence */}
+        {/* PREDICTIONS */}
+        <section
+          id="predictions"
+          className="mt-14"
+        >
+
+          <div className="mb-6">
+
+            <h3 className="text-3xl font-bold">
+              Predictive Intelligence
+            </h3>
+
+            <p className="text-zinc-500 mt-2">
+              Machine learning powered churn prediction and customer scoring.
+            </p>
+
+          </div>
+
           <MLInsights predictions={predictions} />
 
-          {/* Simulation */}
+          <ExecutiveInsights />
+
+          <RFMEngine />
+
+          <AIAnalystChat />
+
+        </section>
+
+        {/* ANALYTICS */}
+        <section
+          id="customers"
+          className="mt-14"
+        >
+
+          <div className="mb-6">
+
+            <h3 className="text-3xl font-bold">
+              Customer Analytics
+            </h3>
+
+            <p className="text-zinc-500 mt-2">
+              Revenue intelligence, segmentation, and customer behavior analysis.
+            </p>
+
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+
+            <RevenueChart />
+
+            <SegmentChart />
+
+          </div>
+
+          <CustomerTable />
+
+        </section>
+
+        {/* SIMULATION */}
+        <section
+          id="simulations"
+          className="mt-14 mb-20"
+        >
+
+          <div className="mb-6">
+
+            <h3 className="text-3xl font-bold">
+              AI Strategy Simulations
+            </h3>
+
+            <p className="text-zinc-500 mt-2">
+              Simulate retention campaigns and strategic business decisions.
+            </p>
+
+          </div>
+
           <SimulationPanel />
 
         </section>
 
-      </div>
+      </section>
 
     </main>
   );
